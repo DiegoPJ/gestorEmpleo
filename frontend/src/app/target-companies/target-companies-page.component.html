@@ -1,0 +1,130 @@
+<section class="page-header">
+  <div>
+    <p>Empresas</p>
+    <h1>Empresas objetivo</h1>
+  </div>
+  <button type="button" (click)="loadCompanies()" [disabled]="loading">
+    Actualizar
+  </button>
+</section>
+
+<form class="quick-add" [formGroup]="form" (ngSubmit)="createCompany()">
+  <label>
+    Empresa
+    <input type="text" formControlName="name">
+  </label>
+  <button type="submit" [disabled]="saving">
+    {{ saving ? 'Guardando...' : '+' }}
+  </button>
+</form>
+
+@if (form.controls.name.invalid && form.controls.name.touched) {
+  <p class="field-error">El nombre de la empresa es obligatorio.</p>
+}
+
+@if (errorMessage) {
+  <p class="error">{{ errorMessage }}</p>
+}
+
+<section class="list-panel">
+  <div class="list-header">
+    <h2>Listado de empresas</h2>
+    <span>{{ companies.length }}</span>
+  </div>
+
+  @if (loading) {
+    <p class="muted">Cargando empresas...</p>
+  } @else if (companies.length === 0) {
+    <div class="empty">
+      <strong>No hay empresas todavia</strong>
+      <span>Anade empresas que trabajen con tus tecnologias y marca el seguimiento.</span>
+    </div>
+  } @else {
+    <div class="company-list">
+      <div class="company-row company-row-header">
+        <span>Empresa</span>
+        <span>Reclutador</span>
+        <span>Miembro</span>
+        <span>CV enviado</span>
+        <span>Contestaron</span>
+        <span>En espera</span>
+        <span>Alta</span>
+        <span>Acciones</span>
+      </div>
+
+      @for (company of companies; track company.id) {
+        <article
+          class="company-row"
+          [class.status-waiting]="company.waiting && !company.replied"
+          [class.status-cv-sent]="company.cvSent && !company.waiting && !company.replied"
+          [class.status-replied]="company.replied">
+          <div class="name-cell">
+            @if (editingId === company.id) {
+              <input
+                class="edit-name-input"
+                type="text"
+                [(ngModel)]="editingName"
+                [ngModelOptions]="{ standalone: true }">
+            } @else {
+              <strong>{{ company.name }}</strong>
+            }
+          </div>
+          <label class="check-cell">
+            <input
+              type="checkbox"
+              [checked]="company.recruiterContacted"
+              (change)="toggleFlag(company, 'recruiterContacted', $any($event.target).checked)">
+          </label>
+          <label class="check-cell">
+            <input
+              type="checkbox"
+              [checked]="company.companyMemberContacted"
+              (change)="toggleFlag(company, 'companyMemberContacted', $any($event.target).checked)">
+          </label>
+          <label class="check-cell">
+            <input
+              type="checkbox"
+              [checked]="company.cvSent"
+              (change)="toggleFlag(company, 'cvSent', $any($event.target).checked)">
+          </label>
+          <label class="check-cell">
+            <input
+              type="checkbox"
+              [checked]="company.replied"
+              (change)="toggleFlag(company, 'replied', $any($event.target).checked)">
+          </label>
+          <label class="check-cell">
+            <input
+              type="checkbox"
+              [checked]="company.waiting"
+              (change)="toggleFlag(company, 'waiting', $any($event.target).checked)">
+          </label>
+          <span>{{ company.createdAt | date:'dd/MM/yyyy' }}</span>
+          <div class="row-actions">
+            @if (editingId === company.id) {
+              <button class="save-button" type="button" (click)="saveEdit(company)">
+                OK
+              </button>
+              <button class="secondary-button" type="button" (click)="cancelEdit()">
+                No
+              </button>
+            } @else {
+              <button class="edit-button" type="button" (click)="startEdit(company)">
+                Editar
+              </button>
+              <button
+                class="delete-button"
+                type="button"
+                title="Borrar empresa"
+                aria-label="Borrar empresa"
+                (click)="deleteCompany(company)"
+                [disabled]="deletingId === company.id">
+                X
+              </button>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

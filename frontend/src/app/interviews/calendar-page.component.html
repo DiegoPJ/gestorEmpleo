@@ -1,0 +1,113 @@
+<section class="page-header">
+  <div>
+    <p>Calendario</p>
+    <h1>Entrevistas</h1>
+  </div>
+  <button type="button" (click)="loadCalendar()" [disabled]="loading">
+    Actualizar
+  </button>
+</section>
+
+<section class="list-panel">
+  <div class="list-header">
+    <h2>Entrevistas</h2>
+    <span>{{ interviews.length }}</span>
+  </div>
+
+  @if (errorMessage) {
+    <p class="error">{{ errorMessage }}</p>
+  }
+
+  @if (loading) {
+    <p class="muted">Cargando entrevistas...</p>
+  } @else if (interviews.length === 0) {
+    <div class="empty">
+      <strong>No hay entrevistas todavia</strong>
+      <span>Crea una entrevista desde una oferta.</span>
+    </div>
+  } @else {
+    @if (activeInterviews.length > 0) {
+      <h3>Activas</h3>
+      <div class="interview-list">
+        <div class="interview-row interview-row-header">
+          <span>Fecha</span>
+          <span>Hora</span>
+          <span>Empresa</span>
+          <span>Oferta</span>
+          <span>Tipo</span>
+          <span>Estado</span>
+          <span>Notas</span>
+          <span></span>
+        </div>
+        @for (interview of activeInterviews; track interview.id) {
+          <article
+            class="interview-row active-interview"
+            [ngClass]="getInterviewTypeClass(interview.type)">
+            <strong>{{ interview.interviewDate | date:'dd/MM/yyyy' }}</strong>
+            <span>{{ interview.interviewTime }}</span>
+            <strong>{{ getCompany(interview)?.name || 'Oferta eliminada' }}</strong>
+            @if (getCompany(interview)) {
+              <a class="offer-link" routerLink="/ofertas" [queryParams]="{ oferta: interview.companyId }">
+                {{ getCompany(interview)?.offerTitle || 'Sin titulo' }}
+              </a>
+            } @else {
+              <span>Sin titulo</span>
+            }
+            <span>{{ getTypeLabel(interview.type) }}</span>
+            <span>{{ getComputedStatus(interview) }}</span>
+            <span class="notes">{{ interview.notes || '-' }}</span>
+            <button
+              class="delete-button"
+              type="button"
+              (click)="deleteInterview(interview)"
+              [disabled]="deletingId === interview.id">
+              X
+            </button>
+          </article>
+        }
+      </div>
+    }
+
+    @if (finishedInterviews.length > 0) {
+      <h3 class="finished-title">Finalizadas</h3>
+    <div class="interview-list">
+      <div class="interview-row interview-row-header">
+        <span>Fecha</span>
+        <span>Hora</span>
+        <span>Empresa</span>
+        <span>Oferta</span>
+        <span>Tipo</span>
+        <span>Estado</span>
+        <span>Notas</span>
+        <span></span>
+      </div>
+      @for (interview of finishedInterviews; track interview.id) {
+        <article
+          class="interview-row past-interview"
+          [ngClass]="getInterviewTypeClass(interview.type)">
+          <strong>{{ interview.interviewDate | date:'dd/MM/yyyy' }}</strong>
+          <span>{{ interview.interviewTime }}</span>
+          <strong>{{ getCompany(interview)?.name || 'Oferta eliminada' }}</strong>
+          @if (getCompany(interview)) {
+            <a class="offer-link" routerLink="/ofertas" [queryParams]="{ oferta: interview.companyId }">
+              {{ getCompany(interview)?.offerTitle || 'Sin titulo' }}
+            </a>
+          } @else {
+            <span>Sin titulo</span>
+          }
+          <span>{{ getTypeLabel(interview.type) }}</span>
+          <span>{{ getComputedStatus(interview) }}</span>
+          <span class="notes">{{ interview.notes || '-' }}</span>
+          <button
+            class="delete-button"
+            type="button"
+            (click)="deleteInterview(interview)"
+            [disabled]="deletingId === interview.id">
+            X
+          </button>
+        </article>
+      }
+    </div>
+    }
+  }
+</section>

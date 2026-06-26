@@ -1,44 +1,98 @@
 <section class="page-header">
   <div>
-    <p>Empresas</p>
-    <h1>Catálogo de empresas objetivo</h1>
+    <p>Ofertas</p>
+    <h1>Listado de ofertas</h1>
   </div>
   <button type="button" (click)="loadCompanies()" [disabled]="loading">
     Actualizar
   </button>
 </section>
 
-<section class="content-grid">
-  <form class="company-form" [formGroup]="form" (ngSubmit)="createCompany()">
-    <h2>Nueva empresa</h2>
-
-    <label>
-      Nombre
-      <input type="text" formControlName="name" placeholder="Indra">
-    </label>
-
-    <label>
-      Sector
-      <input type="text" formControlName="sector" placeholder="Tecnología">
-    </label>
-
-    <label>
-      Web
-      <input type="url" formControlName="website" placeholder="https://...">
-    </label>
-
-    @if (form.controls.name.invalid && form.controls.name.touched) {
-      <p class="field-error">El nombre es obligatorio.</p>
-    }
-
-    <button type="submit" [disabled]="saving">
-      {{ saving ? 'Guardando...' : 'Guardar empresa' }}
+<section class="content-grid" [ngClass]="{ 'form-open': formExpanded }">
+  <section class="create-panel">
+    <button class="create-toggle" type="button" (click)="toggleForm()">
+      {{ formExpanded ? 'Cerrar' : '+' }}
     </button>
-  </form>
+
+    @if (formExpanded) {
+      <form class="company-form" [formGroup]="form" (ngSubmit)="submitCompany()">
+        <h2>{{ getEditingTitle() }}</h2>
+
+        <label>
+          Empresa
+          <input type="text" formControlName="name">
+        </label>
+
+        <label>
+          Titulo de la oferta
+          <input type="text" formControlName="offerTitle">
+        </label>
+
+        <label>
+          Contacto
+          <input type="text" formControlName="contactName">
+        </label>
+
+        <label>
+          Tipo de contacto
+          <select formControlName="contactType">
+            @for (option of contactTypeOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="wide-field">
+          Comentario de la oferta
+          <textarea formControlName="offerComment" rows="3"></textarea>
+        </label>
+
+        <div class="process-form-section">
+          <strong>Proceso de seleccion</strong>
+          <label>
+            Recruiter
+            <textarea formControlName="recruiterProcessNotes" rows="3"></textarea>
+          </label>
+          <label>
+            Consultora
+            <textarea formControlName="consultancyProcessNotes" rows="3"></textarea>
+          </label>
+          <label>
+            Cliente final
+            <textarea formControlName="finalClientProcessNotes" rows="3"></textarea>
+          </label>
+        </div>
+
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <p class="field-error">La empresa es obligatoria.</p>
+        }
+
+        @if (form.controls.offerTitle.invalid && form.controls.offerTitle.touched) {
+          <p class="field-error">El titulo de la oferta es obligatorio.</p>
+        }
+
+        @if (form.controls.contactName.invalid && form.controls.contactName.touched) {
+          <p class="field-error">El contacto es obligatorio.</p>
+        }
+
+        <div class="form-actions">
+          <button type="submit" [disabled]="saving">
+            {{ saving ? 'Guardando...' : (editingId === null ? 'Guardar oferta' : 'Actualizar oferta') }}
+          </button>
+
+          @if (editingId !== null) {
+            <button class="secondary-button" type="button" (click)="cancelEdit()" [disabled]="saving">
+              Cancelar
+            </button>
+          }
+        </div>
+      </form>
+    }
+  </section>
 
   <section class="list-panel">
     <div class="list-header">
-      <h2>Empresas guardadas</h2>
+      <h2>Ofertas guardadas</h2>
       <span>{{ companies.length }}</span>
     </div>
 
@@ -46,25 +100,183 @@
       <p class="error">{{ errorMessage }}</p>
     }
 
+    @if (successMessage) {
+      <p class="success">{{ successMessage }}</p>
+    }
+
     @if (loading) {
-      <p class="muted">Cargando empresas...</p>
+      <p class="muted">Cargando ofertas...</p>
     } @else if (companies.length === 0) {
       <div class="empty">
-        <strong>No hay empresas todavía</strong>
+        <strong>No hay ofertas todavia</strong>
         <span>Crea la primera para empezar a registrar candidaturas.</span>
       </div>
     } @else {
       <div class="company-list">
+        <div class="company-row company-row-header">
+          <span>Empresa</span>
+          <span>Oferta</span>
+          <span>Contacto</span>
+          <span>Alta</span>
+          <span>Comentario</span>
+          <span>Proceso</span>
+          <span>Acciones</span>
+        </div>
         @for (company of companies; track company.id) {
-          <article [ngClass]="{ 'without-website': !company.website }">
-            <div>
+          <div class="company-item" [ngClass]="{ 'without-comment': !company.offerComment }">
+            <article
+              class="company-row"
+              [class.highlighted-company]="company.id === highlightedCompanyId"
+              [class.process-none]="!hasProcess(company)"
+              [class.process-recruiter]="company.recruiterProcessNotes && !company.consultancyProcessNotes && !company.finalClientProcessNotes"
+              [class.process-consultancy]="company.consultancyProcessNotes && !company.finalClientProcessNotes"
+              [class.process-final]="company.finalClientProcessNotes">
               <strong>{{ company.name }}</strong>
-              <span>{{ company.sector || 'Sin sector' }}</span>
-            </div>
-            @if (company.website) {
-              <a [href]="company.website" target="_blank" rel="noreferrer">Web</a>
+              <span class="offer-title">{{ company.offerTitle || 'Oferta sin titulo' }}</span>
+              <span>{{ getContactTypeLabel(company.contactType) }}: {{ company.contactName || 'Sin contacto' }}</span>
+              <span class="created-at">{{ company.createdAt | date:'dd/MM/yyyy' }}</span>
+              <div class="comment-cell">
+                @if (company.offerComment) {
+                  <button class="toggle-comment" type="button" (click)="toggleComment(company.id)">
+                    {{ isExpanded(company.id) ? 'Ocultar' : 'Ver mas' }}
+                  </button>
+                }
+              </div>
+              <div class="process-cell">
+                <span>{{ getProcessStageLabel(company) }}</span>
+                @if (hasProcess(company)) {
+                  <button class="toggle-comment" type="button" (click)="toggleProcess(company.id)">
+                    {{ isProcessExpanded(company.id) ? 'Ocultar' : 'Ver proceso' }}
+                  </button>
+                }
+              </div>
+              <div class="row-actions">
+                <button
+                  class="edit-button"
+                  type="button"
+                  title="Editar oferta"
+                  aria-label="Editar oferta"
+                  (click)="startEdit(company)">
+                  Editar
+                </button>
+                @if (getActiveInterviewLevel(company)) {
+                  <a
+                    class="interview-button interview-link"
+                    routerLink="/calendario"
+                    title="Ver entrevista en calendario"
+                    aria-label="Ver entrevista en calendario">
+                    <span>Entrevista</span>
+                    <strong [ngClass]="getInterviewActionClass(company)">{{ getInterviewActionLabel(company) }}</strong>
+                  </a>
+                } @else {
+                  <button
+                    class="interview-button"
+                    type="button"
+                    title="Crear entrevista"
+                    aria-label="Crear entrevista"
+                    (click)="startInterview(company)"
+                    [disabled]="!hasAvailableInterviewTypes(company)">
+                    <span>Entrevista</span>
+                    <strong [ngClass]="getInterviewActionClass(company)">{{ getInterviewActionLabel(company) }}</strong>
+                  </button>
+                }
+                <button
+                  class="delete-button"
+                  type="button"
+                  title="Borrar oferta"
+                  aria-label="Borrar oferta"
+                  (click)="deleteCompany(company)"
+                  [disabled]="deletingId === company.id">
+                  X
+                </button>
+              </div>
+            </article>
+
+            @if (company.offerComment && isExpanded(company.id)) {
+              <div class="comment-detail">
+                <p class="offer-comment">
+                  {{ company.offerComment }}
+                </p>
+              </div>
             }
-          </article>
+
+            @if (hasProcess(company) && isProcessExpanded(company.id)) {
+              <div class="process-detail">
+                <section class="process-card recruiter-card">
+                  <h3><span>1</span>Recruiter</h3>
+                  <p>{{ company.recruiterProcessNotes || 'Sin datos' }}</p>
+                  @if (hasFinishedInterview(company, 'RECRUITER')) {
+                    <div class="interview-result-box">
+                      <strong>Entrevista realizada</strong>
+                      <span>{{ getFinishedInterview(company, 'RECRUITER')?.interviewDate | date:'dd/MM/yyyy' }}</span>
+                      @if (!hasProcessNotes(company, 'RECRUITER')) {
+                        <button type="button" (click)="startEdit(company)">Rellenar</button>
+                      }
+                    </div>
+                  }
+                </section>
+                <section class="process-card consultancy-card">
+                  <h3><span>2</span>Consultora</h3>
+                  <p>{{ company.consultancyProcessNotes || 'Sin datos' }}</p>
+                  @if (hasFinishedInterview(company, 'CONSULTORA')) {
+                    <div class="interview-result-box">
+                      <strong>Entrevista realizada</strong>
+                      <span>{{ getFinishedInterview(company, 'CONSULTORA')?.interviewDate | date:'dd/MM/yyyy' }}</span>
+                      @if (!hasProcessNotes(company, 'CONSULTORA')) {
+                        <button type="button" (click)="startEdit(company)">Rellenar</button>
+                      }
+                    </div>
+                  }
+                </section>
+                <section class="process-card final-card">
+                  <h3><span>3</span>Cliente final</h3>
+                  <p>{{ company.finalClientProcessNotes || 'Sin datos' }}</p>
+                  @if (hasFinishedInterview(company, 'CLIENTE_FINAL')) {
+                    <div class="interview-result-box">
+                      <strong>Entrevista realizada</strong>
+                      <span>{{ getFinishedInterview(company, 'CLIENTE_FINAL')?.interviewDate | date:'dd/MM/yyyy' }}</span>
+                      @if (!hasProcessNotes(company, 'CLIENTE_FINAL')) {
+                        <button type="button" (click)="startEdit(company)">Rellenar</button>
+                      }
+                    </div>
+                  }
+                </section>
+              </div>
+            }
+
+            @if (interviewCompanyId === company.id) {
+              <form class="interview-form" [formGroup]="interviewForm" (ngSubmit)="createInterview(company)">
+                <label>
+                  Tipo
+                  <select formControlName="type">
+                    @for (option of getAvailableInterviewTypeOptions(company); track option.value) {
+                      <option [value]="option.value">{{ option.label }}</option>
+                    }
+                  </select>
+                </label>
+                <label>
+                  Fecha
+                  <input type="date" formControlName="interviewDate">
+                </label>
+                <label>
+                  Hora
+                  <input type="time" formControlName="interviewTime">
+                </label>
+                <label class="interview-notes">
+                  Notas
+                  <textarea formControlName="notes" rows="2"></textarea>
+                </label>
+                <div class="interview-actions">
+                  <button type="submit" [disabled]="savingInterview">
+                    {{ savingInterview ? 'Guardando...' : 'Guardar entrevista' }}
+                  </button>
+                  <button class="secondary-button" type="button" (click)="cancelInterview()" [disabled]="savingInterview">
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            }
+          </div>
         }
       </div>
     }

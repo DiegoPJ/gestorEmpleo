@@ -1,0 +1,94 @@
+<section class="page-header">
+  <div>
+    <p>LinkedIn</p>
+    <h1>Preguntas y respuestas</h1>
+  </div>
+  <button type="button" (click)="loadExplanations()" [disabled]="loading">
+    Actualizar
+  </button>
+</section>
+
+<section class="content-grid" [ngClass]="{ 'form-open': formExpanded }">
+  <section class="create-panel">
+    <button class="create-toggle" type="button" (click)="toggleForm()">
+      {{ formExpanded ? 'Cerrar' : '+' }}
+    </button>
+
+    @if (formExpanded) {
+      <form class="qa-form" [formGroup]="form" (ngSubmit)="submitExplanation()">
+        <label>
+          Pregunta
+          <textarea formControlName="question" rows="3"></textarea>
+        </label>
+
+        <label>
+          Respuesta
+          <textarea formControlName="answer" rows="8"></textarea>
+        </label>
+
+        @if (form.controls.question.invalid && form.controls.question.touched) {
+          <p class="field-error">La pregunta es obligatoria.</p>
+        }
+
+        @if (form.controls.answer.invalid && form.controls.answer.touched) {
+          <p class="field-error">La respuesta es obligatoria.</p>
+        }
+
+        <div class="form-actions">
+          <button type="submit" [disabled]="saving">
+            {{ saving ? 'Guardando...' : (editingId === null ? 'Guardar' : 'Actualizar') }}
+          </button>
+
+          @if (editingId !== null) {
+            <button class="secondary-button" type="button" (click)="cancelEdit()" [disabled]="saving">
+              Cancelar
+            </button>
+          }
+        </div>
+      </form>
+    }
+  </section>
+
+  <section class="list-panel">
+    <div class="list-header">
+      <h2>Banco de respuestas</h2>
+      <span>{{ explanations.length }}</span>
+    </div>
+
+    @if (errorMessage) {
+      <p class="error">{{ errorMessage }}</p>
+    }
+
+    @if (loading) {
+      <p class="muted">Cargando preguntas...</p>
+    } @else if (explanations.length === 0) {
+      <div class="empty">
+        <strong>No hay preguntas todavia</strong>
+        <span>Guarda respuestas para preparar mensajes y conversaciones de LinkedIn.</span>
+      </div>
+    } @else {
+      <div class="qa-list">
+        @for (explanation of explanations; track explanation.id) {
+          <article>
+            <div>
+              <strong>{{ explanation.question }}</strong>
+              <p>{{ explanation.answer }}</p>
+            </div>
+            <div class="row-actions">
+              <button class="edit-button" type="button" (click)="startEdit(explanation)">
+                Editar
+              </button>
+              <button
+                class="delete-button"
+                type="button"
+                (click)="deleteExplanation(explanation)"
+                [disabled]="deletingId === explanation.id">
+                X
+              </button>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
+</section>

@@ -11,9 +11,10 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 export class AppComponent {
   readonly navItems = [
     { label: 'Dashboard', path: '/dashboard' },
+    { label: 'Ofertas', path: '/ofertas' },
     { label: 'Empresas', path: '/empresas' },
-    { label: 'Candidaturas', path: '/dashboard' },
-    { label: 'Contactos', path: '/dashboard' },
-    { label: 'Recordatorios', path: '/dashboard' }
+    { label: 'Calendario', path: '/calendario' },
+    { label: 'CV', path: '/cv-explicacion' },
+    { label: 'LinkedIn', path: '/linkedin' }
   ];
 }

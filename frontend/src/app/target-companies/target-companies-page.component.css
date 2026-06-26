@@ -1,0 +1,290 @@
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.page-header p {
+  margin: 0 0 4px;
+  color: #68758a;
+  font-weight: 700;
+}
+
+h1,
+h2 {
+  margin: 0;
+}
+
+h1 {
+  font-size: 26px;
+}
+
+.page-header button,
+.quick-add button {
+  border: 0;
+  border-radius: 6px;
+  background: #2f80ed;
+  color: #ffffff;
+  padding: 11px 14px;
+  font-weight: 700;
+}
+
+.page-header button:disabled,
+.quick-add button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.quick-add {
+  display: grid;
+  grid-template-columns: minmax(220px, 360px) 44px;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 14px;
+}
+
+label {
+  display: grid;
+  gap: 5px;
+  color: #46566d;
+  font-weight: 700;
+}
+
+input[type='text'] {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 11px 12px;
+  color: #1f2933;
+  background: #ffffff;
+}
+
+input[type='text']:focus {
+  border-color: #2f80ed;
+  outline: 3px solid #d8e9ff;
+}
+
+.field-error,
+.error {
+  margin: 0 0 12px;
+  color: #b42318;
+}
+
+.list-panel {
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #dde4ee;
+  border-radius: 8px;
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.list-header span {
+  display: grid;
+  place-items: center;
+  min-width: 34px;
+  height: 30px;
+  border-radius: 999px;
+  background: #e8f1ff;
+  color: #1f5fbf;
+  font-weight: 800;
+}
+
+.muted {
+  color: #64748b;
+}
+
+.empty {
+  display: grid;
+  gap: 6px;
+  padding: 18px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  color: #64748b;
+  text-align: center;
+}
+
+.empty strong {
+  color: #1f2933;
+}
+
+.company-list {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid #e1e8f0;
+  border-radius: 8px;
+}
+
+.company-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.5fr) repeat(5, minmax(90px, 1fr)) 110px 92px;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 12px;
+  border-bottom: 1px solid #e1e8f0;
+}
+
+.company-row:last-child {
+  border-bottom: 0;
+}
+
+.company-row.status-waiting {
+  background: #fff1f2;
+}
+
+.company-row.status-cv-sent {
+  background: #f0fdf4;
+}
+
+.company-row.status-replied {
+  background: #dcfce7;
+}
+
+.company-row-header {
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.company-row strong {
+  color: #111827;
+}
+
+.company-row span {
+  color: #64748b;
+}
+
+.check-cell {
+  display: flex;
+  justify-content: center;
+}
+
+.check-cell input {
+  width: 18px;
+  height: 18px;
+}
+
+.name-cell {
+  min-width: 0;
+}
+
+.edit-name-input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 8px 9px;
+  color: #1f2933;
+}
+
+.row-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.edit-button,
+.save-button,
+.secondary-button,
+.delete-button {
+  display: grid;
+  place-items: center;
+  height: 32px;
+  border-radius: 6px;
+  font-weight: 900;
+}
+
+.edit-button {
+  width: 52px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12px;
+}
+
+.save-button,
+.secondary-button {
+  width: 38px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 12px;
+}
+
+.save-button {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.delete-button {
+  width: 32px;
+  border: 1px solid #f1b4b4;
+  background: #fff5f5;
+  color: #b42318;
+}
+
+.edit-button:hover {
+  background: #dbeafe;
+}
+
+.save-button:hover {
+  background: #dcfce7;
+}
+
+.secondary-button:hover {
+  background: #e2e8f0;
+}
+
+.delete-button:hover {
+  background: #fee4e2;
+}
+
+.delete-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+  .quick-add {
+    grid-template-columns: 1fr 44px;
+  }
+
+  .company-list {
+    border: 0;
+    gap: 8px;
+    overflow: visible;
+  }
+
+  .company-row-header {
+    display: none;
+  }
+
+  .company-row {
+    grid-template-columns: 1fr 32px;
+    border: 1px solid #e1e8f0;
+    border-radius: 8px;
+  }
+
+  .company-row > :not(.row-actions) {
+    grid-column: 1;
+  }
+
+  .row-actions {
+    grid-column: 2;
+    grid-row: 1;
+    flex-direction: column;
+  }
+
+  .check-cell {
+    justify-content: flex-start;
+  }
+}

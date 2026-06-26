@@ -1,0 +1,197 @@
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.page-header p {
+  margin: 0 0 4px;
+  color: #68758a;
+  font-weight: 700;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+h1 {
+  font-size: 26px;
+}
+
+.page-header button {
+  border: 0;
+  border-radius: 6px;
+  background: #2f80ed;
+  color: #ffffff;
+  padding: 11px 14px;
+  font-weight: 700;
+}
+
+.page-header button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.list-panel {
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #dde4ee;
+  border-radius: 8px;
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.list-header span {
+  display: grid;
+  place-items: center;
+  min-width: 34px;
+  height: 30px;
+  border-radius: 999px;
+  background: #e8f1ff;
+  color: #1f5fbf;
+  font-weight: 800;
+}
+
+.muted {
+  color: #64748b;
+}
+
+.error {
+  margin: 0 0 12px;
+  color: #b42318;
+}
+
+.empty {
+  display: grid;
+  gap: 6px;
+  padding: 18px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  color: #64748b;
+  text-align: center;
+}
+
+.empty strong {
+  color: #1f2933;
+}
+
+.interview-list {
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid #e1e8f0;
+  border-radius: 8px;
+}
+
+h3 {
+  margin: 12px 0 8px;
+  color: #334155;
+  font-size: 16px;
+}
+
+.finished-title {
+  margin-top: 18px;
+}
+
+.interview-row {
+  display: grid;
+  grid-template-columns: 110px 80px minmax(120px, 1fr) minmax(130px, 1.2fr) 110px 80px minmax(160px, 1.4fr) 32px;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 12px;
+  border-bottom: 1px solid #e1e8f0;
+}
+
+.interview-row:last-child {
+  border-bottom: 0;
+}
+
+.interview-row-header {
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.interview-row.type-recruiter {
+  background: #eff6ff;
+  box-shadow: inset 4px 0 0 #2f80ed;
+}
+
+.interview-row.type-consultancy {
+  background: #f0fdf4;
+  box-shadow: inset 4px 0 0 #16a34a;
+}
+
+.interview-row.type-final {
+  background: #fff1f2;
+  box-shadow: inset 4px 0 0 #dc2626;
+}
+
+.interview-row.past-interview {
+  color: #64748b;
+  opacity: 0.78;
+  text-decoration: line-through;
+}
+
+.interview-list strong,
+.interview-list span,
+.offer-link {
+  display: block;
+}
+
+.interview-list span,
+.interview-list p {
+  color: #64748b;
+}
+
+.offer-link {
+  color: #1f5fbf;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.offer-link:hover {
+  text-decoration: underline;
+}
+
+.interview-list p {
+  margin: 6px 0 0;
+}
+
+.notes {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.delete-button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #f1b4b4;
+  border-radius: 6px;
+  background: #fff5f5;
+  color: #b42318;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+@media (max-width: 1100px) {
+  .interview-row {
+    grid-template-columns: 90px 70px minmax(100px, 1fr) minmax(110px, 1fr) 96px 74px minmax(130px, 1fr) 32px;
+    gap: 8px;
+    font-size: 14px;
+  }
+}
