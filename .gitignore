@@ -1,0 +1,13 @@
+.idea/
+.vscode/
+.project
+.settings/
+target/
+node_modules/
+dist/
+.angular/
+.npm-cache/
+.pnpm-store/
+.env
+*.log
+Doc DPJ/

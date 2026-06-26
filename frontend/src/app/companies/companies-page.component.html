@@ -1,0 +1,72 @@
+<section class="page-header">
+  <div>
+    <p>Empresas</p>
+    <h1>Catálogo de empresas objetivo</h1>
+  </div>
+  <button type="button" (click)="loadCompanies()" [disabled]="loading">
+    Actualizar
+  </button>
+</section>
+
+<section class="content-grid">
+  <form class="company-form" [formGroup]="form" (ngSubmit)="createCompany()">
+    <h2>Nueva empresa</h2>
+
+    <label>
+      Nombre
+      <input type="text" formControlName="name" placeholder="Indra">
+    </label>
+
+    <label>
+      Sector
+      <input type="text" formControlName="sector" placeholder="Tecnología">
+    </label>
+
+    <label>
+      Web
+      <input type="url" formControlName="website" placeholder="https://...">
+    </label>
+
+    @if (form.controls.name.invalid && form.controls.name.touched) {
+      <p class="field-error">El nombre es obligatorio.</p>
+    }
+
+    <button type="submit" [disabled]="saving">
+      {{ saving ? 'Guardando...' : 'Guardar empresa' }}
+    </button>
+  </form>
+
+  <section class="list-panel">
+    <div class="list-header">
+      <h2>Empresas guardadas</h2>
+      <span>{{ companies.length }}</span>
+    </div>
+
+    @if (errorMessage) {
+      <p class="error">{{ errorMessage }}</p>
+    }
+
+    @if (loading) {
+      <p class="muted">Cargando empresas...</p>
+    } @else if (companies.length === 0) {
+      <div class="empty">
+        <strong>No hay empresas todavía</strong>
+        <span>Crea la primera para empezar a registrar candidaturas.</span>
+      </div>
+    } @else {
+      <div class="company-list">
+        @for (company of companies; track company.id) {
+          <article [ngClass]="{ 'without-website': !company.website }">
+            <div>
+              <strong>{{ company.name }}</strong>
+              <span>{{ company.sector || 'Sin sector' }}</span>
+            </div>
+            @if (company.website) {
+              <a [href]="company.website" target="_blank" rel="noreferrer">Web</a>
+            }
+          </article>
+        }
+      </div>
+    }
+  </section>
+</section>

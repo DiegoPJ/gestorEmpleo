@@ -1,0 +1,23 @@
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">GE</span>
+      <div>
+        <strong>Gestor Empleo</strong>
+        <small>Seguimiento profesional</small>
+      </div>
+    </div>
+
+    <nav aria-label="Principal">
+      @for (item of navItems; track item.label) {
+        <a [routerLink]="item.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <main class="main">
+    <router-outlet />
+  </main>
+</div>

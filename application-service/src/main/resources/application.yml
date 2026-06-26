@@ -1,0 +1,26 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: application-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gestor_empleo
+    username: gestor
+    password: gestor
+  data:
+    mongodb:
+      uri: mongodb://gestor:gestor@localhost:27017/gestor_empleo?authSource=admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  kafka:
+    bootstrap-servers: localhost:9092
+  batch:
+    job:
+      enabled: false
+
+gestor-empleo:
+  topics:
+    application-status-changed: application.status.changed
